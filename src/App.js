@@ -51,21 +51,22 @@ const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 export default function App() {
+  const [movies, setMovies] = useState(tempMovieData);
   return (
     <>
-      <Navbar />
-      <Main />
+      <Navbar totalMovies={movies.length} />
+      <Main movies={movies} />
     </>
   );
 }
 
 // 1. Navbar
-function Navbar() {
+function Navbar({ totalMovies }) {
   return (
     <nav className="nav-bar">
       <Logo />
       <Search />
-      <NumResults />
+      <NumResults totalMovies={totalMovies} />
     </nav>
   );
 }
@@ -92,27 +93,26 @@ function Search() {
   );
 }
 
-function NumResults() {
+function NumResults({ totalMovies }) {
   return (
     <p className="num-results">
-      Found <strong>X</strong> results
+      Found <strong>{totalMovies}</strong> results
     </p>
   );
 }
 
 // Main
-function Main() {
+function Main({ movies }) {
   return (
     <main className="main">
-      <ListBox />
-      <WatchedBox />
+      <ListBox movies={movies} />
+      <WatchedBox movies={movies} />
     </main>
   );
 }
 
 // 2. List Box
-function ListBox() {
-  const [movies, setMovies] = useState(tempMovieData);
+function ListBox({ movies }) {
   const [isOpen1, setIsOpen1] = useState(true);
   return (
     <div className="box">
