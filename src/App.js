@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Children, useState } from "react";
 
 const tempMovieData = [
   {
@@ -54,21 +54,20 @@ export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   return (
     <>
-      <Navbar totalMovies={movies.length} />
+      <Navbar>
+        <Logo />
+        <Search />
+        <NumResults>{movies.length}</NumResults>
+      </Navbar>
+
       <Main movies={movies} />
     </>
   );
 }
 
 // 1. Navbar
-function Navbar({ totalMovies }) {
-  return (
-    <nav className="nav-bar">
-      <Logo />
-      <Search />
-      <NumResults totalMovies={totalMovies} />
-    </nav>
-  );
+function Navbar({ children }) {
+  return <nav className="nav-bar">{children}</nav>;
 }
 
 function Logo() {
@@ -93,10 +92,10 @@ function Search() {
   );
 }
 
-function NumResults({ totalMovies }) {
+function NumResults({ children }) {
   return (
     <p className="num-results">
-      Found <strong>{totalMovies}</strong> results
+      Found <strong>{children}</strong> results
     </p>
   );
 }
