@@ -64,8 +64,8 @@ function Navbar() {
   return (
     <nav className="nav-bar">
       <Logo />
-      <SearchBar />
-      <NavAside />
+      <Search />
+      <NumResults />
     </nav>
   );
 }
@@ -79,7 +79,7 @@ function Logo() {
   );
 }
 
-function SearchBar() {
+function Search() {
   const [query, setQuery] = useState("");
   return (
     <input
@@ -92,7 +92,7 @@ function SearchBar() {
   );
 }
 
-function NavAside() {
+function NumResults() {
   return (
     <p className="num-results">
       Found <strong>X</strong> results
@@ -104,13 +104,14 @@ function NavAside() {
 function Main() {
   return (
     <main className="main">
-      <MoviesList />
-      <WatchedList />
+      <ListBox />
+      <WatchedBox />
     </main>
   );
 }
 
-function MoviesList() {
+// 2. List Box
+function ListBox() {
   const [movies, setMovies] = useState(tempMovieData);
   const [isOpen1, setIsOpen1] = useState(true);
   return (
@@ -121,21 +122,26 @@ function MoviesList() {
       >
         {isOpen1 ? "–" : "+"}
       </button>
-      {isOpen1 && <MovieCardList movies={movies} />}
+
+      {isOpen1 && <MovieList movies={movies} />}
     </div>
   );
 }
 
-function MovieCardList({ movies }) {
+function MovieList({ movies }) {
   return (
     <ul className="list">
       {movies?.map((movie) => (
-        <MovieCard movie={movie} />
+        <Movie
+          movie={movie}
+          key={movie.id}
+        />
       ))}
     </ul>
   );
 }
-function MovieCard({ movie }) {
+
+function Movie({ movie }) {
   return (
     <li key={movie.imdbID}>
       <img
@@ -153,15 +159,12 @@ function MovieCard({ movie }) {
   );
 }
 
-// 2. Movies Watched Children Component
-function WatchedList() {
+// 3. WatchedBox
+function WatchedBox() {
   const [watched, setWatched] = useState(tempWatchedData);
 
   const [isOpen2, setIsOpen2] = useState(true);
 
-  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
-  const avgUserRating = average(watched.map((movie) => movie.userRating));
-  const avgRuntime = average(watched.map((movie) => movie.runtime));
   return (
     <div className="box">
       <button
@@ -172,12 +175,7 @@ function WatchedList() {
       </button>
       {isOpen2 && (
         <>
-          <MoviesWatched
-            watched={watched}
-            avgUserRating={avgUserRating}
-            avgImdbRating={avgImdbRating}
-            avgRuntime={avgRuntime}
-          />
+          <MoviesWatched watched={watched} />
           <MovieWatchedDetailList watched={watched} />
         </>
       )}
@@ -185,7 +183,11 @@ function WatchedList() {
   );
 }
 
-function MoviesWatched({ watched, avgImdbRating, avgUserRating, avgRuntime }) {
+function MoviesWatched({ watched }) {
+  // These are derived states and only belongs to this component
+  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
+  const avgUserRating = average(watched.map((movie) => movie.userRating));
+  const avgRuntime = average(watched.map((movie) => movie.runtime));
   return (
     <div className="summary">
       <h2>Movies you watched</h2>
