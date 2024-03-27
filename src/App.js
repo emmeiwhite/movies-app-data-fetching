@@ -1,4 +1,4 @@
-import { Children, useState } from "react";
+import { useState, useEffect } from "react";
 
 const tempMovieData = [
   {
@@ -50,8 +50,32 @@ const tempWatchedData = [
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
+const url = "http://www.omdbapi.com/?apikey=10a55471&s=pathan";
 export default function App() {
-  const [movies, setMovies] = useState(tempMovieData);
+  const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    fetch(url)
+      .then((response) => {
+        setIsLoading(false);
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setMovies(data.Search);
+      });
+  }, []);
+
+  if (isLoading) {
+    return <h1>Loading ...</h1>;
+  }
+
+  if (isError) {
+    return <h1>Error ...</h1>;
+  }
+
   return (
     <>
       <Navbar>
@@ -64,7 +88,7 @@ export default function App() {
         <ListBox>
           <MovieList movies={movies} />
         </ListBox>
-        <WatchedBox movies={movies} />
+        <WatchedBox />
       </Main>
     </>
   );
