@@ -57,7 +57,7 @@ export default function App() {
       <Navbar>
         <Logo />
         <Search />
-        <NumResults>{movies.length}</NumResults>
+        <NumResults totalMovies={movies.length} />
       </Navbar>
 
       <Main movies={movies} />
@@ -92,10 +92,10 @@ function Search() {
   );
 }
 
-function NumResults({ children }) {
+function NumResults({ totalMovies }) {
   return (
     <p className="num-results">
-      Found <strong>{children}</strong> results
+      Found <strong>{totalMovies}</strong> results
     </p>
   );
 }
