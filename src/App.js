@@ -283,18 +283,82 @@ function WatchedBox({ selectedId, handleBackClose }) {
 
 // Movie Selection Process
 function MovieDetails({ selectedId, handleBackClose }) {
+  const [currentMovie, setCurrentMovie] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  const {
+    Title: title,
+    Year: year,
+    Released: released,
+    Poster: poster,
+    Runtime: runtime,
+    imdbRating,
+    Plot: plot,
+    Actors: actors,
+    Director: director,
+    Genre: genre,
+  } = currentMovie;
+  // To fetch the movie details
+  useEffect(
+    function () {
+      async function getMovieDetails() {
+        const response = await fetch(
+          `http://www.omdbapi.com/?apikey=10a55471&i=${selectedId}`
+        );
+
+        const result = await response.json();
+        console.log(result);
+
+        setCurrentMovie(result);
+        setIsLoading(false);
+      }
+
+      getMovieDetails();
+    },
+    [selectedId]
+  );
   return (
     <div className="details">
-      <button
-        className="btn-back"
-        onClick={handleBackClose}
-      >
-        &larr;
-      </button>
-      {selectedId}
+      {isLoading ? (
+        "LOADING..."
+      ) : (
+        <>
+          <header>
+            <button
+              className="btn-back"
+              onClick={handleBackClose}
+            >
+              &larr;
+            </button>
+
+            <img
+              src={poster}
+              alt={`Poster of the ${currentMovie}`}
+            />
+            <div className="details-overview">
+              <h2>{title}</h2>
+              <p>{released}</p>
+              <p>{genre}</p>
+              <p>
+                <span>⭐️</span> {imdbRating} IMDb rating
+              </p>
+            </div>
+          </header>
+
+          <section>
+            <p>
+              <em>{plot}</em>
+            </p>
+
+            <p>Starring {actors}</p>
+            <p>Directed by {director}</p>
+          </section>
+        </>
+      )}
     </div>
   );
 }
+
 function MoviesWatched({ watched }) {
   // These are derived states and only belongs to this component
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
