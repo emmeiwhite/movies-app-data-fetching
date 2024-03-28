@@ -56,7 +56,7 @@ export default function App() {
   const [isError, setIsError] = useState(false);
 
   // Lifting the state up
-  const [query, setQuery] = useState("inception");
+  const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState("");
 
   function handleMovieClick(id) {
@@ -103,6 +103,9 @@ export default function App() {
       setIsLoading(false);
       return;
     }
+    // To make sure we close the selected Movie detail on right box when a user searches for the new movie
+
+    handleBackClose();
     getMovies();
 
     // Clean up function to abort requests
