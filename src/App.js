@@ -50,45 +50,91 @@ const tempWatchedData = [
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-const url = "http://www.omdbapi.com/?apikey=10a55471&s=pathan";
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
+  // Lifting the state up
+  const [query, setQuery] = useState("inception");
+  const [selectedId, setSelectedId] = useState("");
+
+  console.log("Length of the movies");
+  //   console.log(movies.length);
+  let url = `http://www.omdbapi.com/?apikey=10a55471&s=${query}`;
   useEffect(() => {
-    fetch(url)
-      .then((response) => {
+    async function getMovies() {
+      try {
+        const response = await fetch(url);
+        console.log(response);
+        const data = await response.json();
+
+        console.log(data.Response);
+
+        if (!response.ok || data.Response === "False") {
+          throw new Error("Something went wrong");
+        } else {
+          console.log(data);
+          setMovies(data.Search);
+          setIsLoading(false);
+          setIsError(false);
+        }
+      } catch (err) {
         setIsLoading(false);
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        setMovies(data.Search);
-      });
-  }, []);
+        setIsError(true);
+        console.log(err.message);
+      }
+    }
+
+    if (query.length < 3) {
+      setMovies([]);
+      setIsError(false);
+      setIsLoading(false);
+      return;
+    }
+    getMovies();
+  }, [query]);
 
   if (isLoading) {
     return <h1>Loading ...</h1>;
   }
 
-  if (isError) {
-    return <h1>Error ...</h1>;
+  //   if (isError) {
+  //     return <h1>Error ...</h1>;
+  //   }
+
+  //   return <h1>Main Content</h1>;
+
+  function handleMovieClick(id) {
+    // setSelectedId(id);
+    setSelectedId((selectedId) => (id === selectedId ? null : id));
   }
 
+  function handleBackClose() {
+    setSelectedId(null);
+  }
   return (
     <>
       <Navbar>
         <Logo />
-        <Search />
-        <NumResults totalMovies={movies.length} />
+        <Search
+          query={query}
+          setQuery={setQuery}
+        />
+        <NumResults totalMovies={movies?.length} />
       </Navbar>
 
       <Main>
-        <ListBox>
-          <MovieList movies={movies} />
+        <ListBox isError={isError}>
+          <MovieList
+            movies={movies}
+            handleMovieClick={handleMovieClick}
+          />
         </ListBox>
-        <WatchedBox />
+        <WatchedBox
+          selectedId={selectedId}
+          handleBackClose={handleBackClose}
+        />
       </Main>
     </>
   );
@@ -108,8 +154,9 @@ function Logo() {
   );
 }
 
-function Search() {
-  const [query, setQuery] = useState("");
+function Search({ query, setQuery }) {
+  //   const [query, setQuery] = useState("");
+  // We lifted this whole state up and made use of the same setter function
   return (
     <input
       className="search"
@@ -135,8 +182,22 @@ function Main({ children }) {
 }
 
 // 2. List Box
-function ListBox({ children }) {
+function ListBox({ children, isError }) {
   const [isOpen1, setIsOpen1] = useState(true);
+
+  if (isError) {
+    return (
+      <div
+        className="box"
+        style={{ display: "grid", placeItems: "center", fontSize: "2rem" }}
+      >
+        <p>
+          {" "}
+          <button>⛔️</button> &nbsp; Something went wrong!
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="box">
       <button
@@ -151,22 +212,26 @@ function ListBox({ children }) {
   );
 }
 
-function MovieList({ movies }) {
+function MovieList({ movies, handleMovieClick }) {
   return (
-    <ul className="list">
-      {movies?.map((movie) => (
+    <ul className="list list-movies">
+      {movies.map((movie) => (
         <Movie
           movie={movie}
           key={movie.id}
+          handleMovieClick={handleMovieClick}
         />
       ))}
     </ul>
   );
 }
 
-function Movie({ movie }) {
+function Movie({ movie, handleMovieClick }) {
   return (
-    <li key={movie.imdbID}>
+    <li
+      key={movie.imdbID}
+      onClick={() => handleMovieClick(movie.imdbID)}
+    >
       <img
         src={movie.Poster}
         alt={`${movie.Title} poster`}
@@ -183,11 +248,21 @@ function Movie({ movie }) {
 }
 
 // 3. WatchedBox
-function WatchedBox() {
+function WatchedBox({ selectedId, handleBackClose }) {
   const [watched, setWatched] = useState(tempWatchedData);
-
   const [isOpen2, setIsOpen2] = useState(true);
 
+  console.log(selectedId);
+  if (selectedId) {
+    return (
+      <div className="box">
+        <MovieDetails
+          selectedId={selectedId}
+          handleBackClose={handleBackClose}
+        />
+      </div>
+    );
+  }
   return (
     <div className="box">
       <button
@@ -206,6 +281,20 @@ function WatchedBox() {
   );
 }
 
+// Movie Selection Process
+function MovieDetails({ selectedId, handleBackClose }) {
+  return (
+    <div className="details">
+      <button
+        className="btn-back"
+        onClick={handleBackClose}
+      >
+        &larr;
+      </button>
+      {selectedId}
+    </div>
+  );
+}
 function MoviesWatched({ watched }) {
   // These are derived states and only belongs to this component
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
