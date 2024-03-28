@@ -59,13 +59,21 @@ export default function App() {
   const [query, setQuery] = useState("inception");
   const [selectedId, setSelectedId] = useState("");
 
-  console.log("Length of the movies");
-  //   console.log(movies.length);
+  function handleMovieClick(id) {
+    // setSelectedId(id);
+    setSelectedId((selectedId) => (id === selectedId ? null : id));
+  }
+
+  function handleBackClose() {
+    setSelectedId(null);
+  }
+
   let url = `http://www.omdbapi.com/?apikey=10a55471&s=${query}`;
   useEffect(() => {
+    const controller = new AbortController();
     async function getMovies() {
       try {
-        const response = await fetch(url);
+        const response = await fetch(url, { signal: controller.signal });
         console.log(response);
         const data = await response.json();
 
@@ -81,7 +89,10 @@ export default function App() {
         }
       } catch (err) {
         setIsLoading(false);
-        setIsError(true);
+        if (err.message !== "AboutError") {
+          setIsError(true);
+        }
+
         console.log(err.message);
       }
     }
@@ -93,26 +104,17 @@ export default function App() {
       return;
     }
     getMovies();
+
+    // Clean up function to abort requests
+    return function () {
+      controller.abort();
+    };
   }, [query]);
 
   if (isLoading) {
     return <h1>Loading ...</h1>;
   }
 
-  //   if (isError) {
-  //     return <h1>Error ...</h1>;
-  //   }
-
-  //   return <h1>Main Content</h1>;
-
-  function handleMovieClick(id) {
-    // setSelectedId(id);
-    setSelectedId((selectedId) => (id === selectedId ? null : id));
-  }
-
-  function handleBackClose() {
-    setSelectedId(null);
-  }
   return (
     <>
       <Navbar>
@@ -298,9 +300,29 @@ function MovieDetails({ selectedId, handleBackClose }) {
     Director: director,
     Genre: genre,
   } = currentMovie;
+
+  /* --- Closing the Watched Movies on Escape key press  | This is again a side effect and needs to be handled inside the useEffect --- */
+
+  useEffect(
+    function () {
+      function callback(e) {
+        if (e.code === "Escape") {
+          handleBackClose();
+          console.log("ESCAPE!");
+        }
+      }
+      document.addEventListener("keydown", callback);
+      return function () {
+        document.removeEventListener("keydown", callback);
+      };
+    },
+    [handleBackClose]
+  );
+
   // To fetch the movie details
   useEffect(
     function () {
+      // To abort too many requests
       async function getMovieDetails() {
         const response = await fetch(
           `http://www.omdbapi.com/?apikey=10a55471&i=${selectedId}`
@@ -316,6 +338,21 @@ function MovieDetails({ selectedId, handleBackClose }) {
       getMovieDetails();
     },
     [selectedId]
+  );
+
+  // Adding the title of the movie to the Browser Title Bar
+
+  useEffect(
+    function () {
+      document.title = `Movie | ${title}`;
+      return function () {
+        document.title = "usePopCorn";
+        console.log(`Clean up effect for movie ${title} `);
+        //closure in action on the above console with title
+      };
+    },
+
+    [title]
   );
   return (
     <div className="details">
