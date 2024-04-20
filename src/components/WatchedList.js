@@ -1,34 +1,19 @@
-import { useState } from "react";
-
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-export default function WatchedList({ watched }) {
-  const [isOpen2, setIsOpen2] = useState(true);
-
-  return (
-    <div className="box">
-      <button
-        className="btn-toggle"
-        onClick={() => setIsOpen2((open) => !open)}
-      >
-        {isOpen2 ? "–" : "+"}
-      </button>
-
-      {isOpen2 && (
-        <>
-          <WatchedSummary watched={watched} />
-          <ul className="list">
-            {watched.map((movie) => (
-              <WatchedMovie movie={movie} />
-            ))}
-          </ul>
-        </>
-      )}
-    </div>
-  );
+export default function WatchedList({ children }) {
+  return <>{children}</>;
 }
 
+export function WatchList({ watched }) {
+  return (
+    <ul className="list">
+      {watched.map((movie) => (
+        <WatchedMovie movie={movie} />
+      ))}
+    </ul>
+  );
+}
 function WatchedMovie({ movie }) {
   return (
     <li key={movie.imdbID}>
@@ -55,7 +40,7 @@ function WatchedMovie({ movie }) {
   );
 }
 
-function WatchedSummary({ watched }) {
+export function WatchedSummary({ watched }) {
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
   const avgUserRating = average(watched.map((movie) => movie.userRating));
   const avgRuntime = average(watched.map((movie) => movie.runtime));

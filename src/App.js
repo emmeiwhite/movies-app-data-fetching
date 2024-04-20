@@ -1,6 +1,11 @@
 import { useState } from "react";
 import Navbar from "./components/Navbar";
 import Main from "./components/Main";
+import MoviesList from "./components/MoviesList";
+import WatchedList from "./components/WatchedList";
+import { MovieList } from "./components/MoviesList";
+import { WatchList } from "./components/WatchedList";
+import { WatchedSummary } from "./components/WatchedList";
 
 import { NumResult } from "./components/Navbar";
 const tempMovieData = [
@@ -60,10 +65,46 @@ export default function App() {
         <NumResult movies={movies} />
       </Navbar>
 
-      <Main
-        watched={watched}
-        movies={movies}
-      />
+      <Main>
+        <MoviesList>
+          {/* <div className="box">
+            <button
+              className="btn-toggle"
+              onClick={() => setIsOpen1((open) => !open)}
+            >
+              {isOpen1 ? "–" : "+"}
+            </button>
+
+            {isOpen1 && <MovieList movies={movies} />}
+          </div> */}
+
+          <Box>
+            <MovieList movies={movies} />
+          </Box>
+        </MoviesList>
+
+        <WatchedList>
+          <Box>
+            <WatchList watched={watched}></WatchList>
+          </Box>
+        </WatchedList>
+      </Main>
     </>
+  );
+}
+
+function Box({ children }) {
+  const [isOpen, setIsOpen] = useState(true);
+  return (
+    <div className="box">
+      <button
+        className="btn-toggle"
+        onClick={() => setIsOpen((open) => !open)}
+      >
+        {isOpen ? "–" : "+"}
+      </button>
+
+      {isOpen && <>{children}</>}
+    </div>
   );
 }

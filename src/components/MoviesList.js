@@ -1,25 +1,14 @@
-import { useState } from "react";
+export default function MoviesList({ children }) {
+  return <>{children}</>;
+}
 
-export default function MoviesList({ movies }) {
-  const [isOpen1, setIsOpen1] = useState(true);
-
+export function MovieList({ movies }) {
   return (
-    <div className="box">
-      <button
-        className="btn-toggle"
-        onClick={() => setIsOpen1((open) => !open)}
-      >
-        {isOpen1 ? "–" : "+"}
-      </button>
-
-      {isOpen1 && (
-        <ul className="list">
-          {movies?.map((movie) => (
-            <Movie movie={movie} />
-          ))}
-        </ul>
-      )}
-    </div>
+    <ul className="list">
+      {movies?.map((movie) => (
+        <Movie movie={movie} />
+      ))}
+    </ul>
   );
 }
 
