@@ -1,4 +1,15 @@
-.star-ratings svg {
+.star-ratings-wrapper {
+  display: grid;
+  grid-template-columns: minmax(10rem, 15rem) 3rem;
+  gap: 2rem;
+  place-items: center;
+}
+
+.star-ratings span svg {
   font-size: 3rem;
   cursor: pointer;
+}
+
+.star-ratings span.filled svg {
+  fill: red;
 }

@@ -2,22 +2,27 @@ import { GoStar, GoStarFill } from "react-icons/go";
 import "./StarRating.css";
 import { useState } from "react";
 export default function StarRating() {
-  const [isSelected, setIsSelected] = useState(false);
+  const [rating, setRating] = useState(0);
 
-  function handleClick() {
-    setIsSelected((prev) => !prev);
+  function handleClick(rating) {
+    setRating(rating);
   }
 
-  function handleMouseOver() {
-    setIsSelected((prev) => !prev);
-  }
   return (
-    <div
-      className="star-ratings"
-      onClick={handleClick}
-      onMouseOver={handleMouseOver}
-    >
-      {isSelected ? <GoStarFill /> : <GoStar />}
+    <div className="star-ratings-wrapper">
+      <div className="star-ratings">
+        {Array.from({ length: 5 }, (_, i) => (
+          <span
+            onClick={() => handleClick(i + 1)}
+            key={i}
+            className={i < rating ? "filled" : ""}
+          >
+            <GoStar />
+          </span>
+        ))}
+      </div>
+
+      <h2>{rating || ""}</h2>
     </div>
   );
 }
