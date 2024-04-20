@@ -5,9 +5,9 @@ import MoviesList from "./components/MoviesList";
 import WatchedList from "./components/WatchedList";
 import { MovieList } from "./components/MoviesList";
 import { WatchList } from "./components/WatchedList";
-import { WatchedSummary } from "./components/WatchedList";
 
 import { NumResult } from "./components/Navbar";
+
 const tempMovieData = [
   {
     imdbID: "tt1375666",
@@ -67,17 +67,6 @@ export default function App() {
 
       <Main>
         <MoviesList>
-          {/* <div className="box">
-            <button
-              className="btn-toggle"
-              onClick={() => setIsOpen1((open) => !open)}
-            >
-              {isOpen1 ? "–" : "+"}
-            </button>
-
-            {isOpen1 && <MovieList movies={movies} />}
-          </div> */}
-
           <Box>
             <MovieList movies={movies} />
           </Box>
@@ -104,7 +93,7 @@ function Box({ children }) {
         {isOpen ? "–" : "+"}
       </button>
 
-      {isOpen && <>{children}</>}
+      {isOpen && children}
     </div>
   );
 }
