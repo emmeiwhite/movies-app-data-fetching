@@ -13,3 +13,8 @@
 .star-ratings span.filled svg {
   fill: red;
 }
+
+.rating {
+  font-size: 2.5rem;
+  background-color: transparent;
+}
