@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import Main from "./components/Main";
 import MoviesList from "./components/MoviesList";
 import WatchedList from "./components/WatchedList";
 import { MovieList } from "./components/MoviesList";
 import { WatchList } from "./components/WatchedList";
+import axios from "axios";
 
 import { NumResult } from "./components/Navbar";
 
@@ -55,9 +56,39 @@ const tempWatchedData = [
   },
 ];
 
+const KEY = "10a55471";
+
 export default function App() {
-  const [movies, setMovies] = useState(tempMovieData);
+  const [query, setQuery] = useState("india");
+  const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState(tempWatchedData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(null);
+
+  const url = `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get(url);
+        console.log(response);
+
+        if (response.data.Response !== "False") {
+          setIsLoading(false);
+          setMovies(response.data.Search);
+        } else {
+          setIsError("Movie not Found!");
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching movie data:", error);
+        setIsError(error.message);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -68,7 +99,10 @@ export default function App() {
       <Main>
         <MoviesList>
           <Box>
-            <MovieList movies={movies} />
+            {isLoading && <Loader />}
+            {isError && <Error message={isError} />}
+
+            {!isLoading && !isError && <MovieList movies={movies} />}
           </Box>
         </MoviesList>
 
@@ -95,5 +129,18 @@ function Box({ children }) {
 
       {isOpen && children}
     </div>
+  );
+}
+
+function Loader() {
+  return <p className="loader">Loading ...</p>;
+}
+
+function Error({ message }) {
+  return (
+    <p className="error">
+      <span>⛔️</span> {""}
+      {message}
+    </p>
   );
 }
