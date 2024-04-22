@@ -9,29 +9,29 @@ import axios from "axios";
 
 import { NumResult } from "./components/Navbar";
 
-const tempMovieData = [
-  {
-    imdbID: "tt1375666",
-    Title: "Inception",
-    Year: "2010",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-  },
-  {
-    imdbID: "tt0133093",
-    Title: "The Matrix",
-    Year: "1999",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
-  },
-  {
-    imdbID: "tt6751668",
-    Title: "Parasite",
-    Year: "2019",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
-  },
-];
+// const tempMovieData = [
+//   {
+//     imdbID: "tt1375666",
+//     Title: "Inception",
+//     Year: "2010",
+//     Poster:
+//       "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
+//   },
+//   {
+//     imdbID: "tt0133093",
+//     Title: "The Matrix",
+//     Year: "1999",
+//     Poster:
+//       "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
+//   },
+//   {
+//     imdbID: "tt6751668",
+//     Title: "Parasite",
+//     Year: "2019",
+//     Poster:
+//       "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
+//   },
+// ];
 
 const tempWatchedData = [
   {
@@ -101,6 +101,13 @@ export default function App() {
     fetchData();
   }, [query, url]);
 
+  function handleSelectMovie(id) {
+    setSelectedId(id);
+  }
+
+  function handleCloseMovie() {
+    setSelectedId(null);
+  }
   return (
     <>
       <Navbar
@@ -116,14 +123,22 @@ export default function App() {
             {isLoading && <Loader />}
             {isError && <Error message={isError} />}
 
-            {!isLoading && !isError && <MovieList movies={movies} />}
+            {!isLoading && !isError && (
+              <MovieList
+                movies={movies}
+                onSelectMovie={handleSelectMovie}
+              />
+            )}
           </Box>
         </MoviesList>
 
         <WatchedList>
           <Box>
             {selectedId ? (
-              <MoviesDetail selectedId={selectedId} />
+              <MoviesDetail
+                selectedId={selectedId}
+                onCloseMovie={handleCloseMovie}
+              />
             ) : (
               <>
                 <WatchedSummary watched={watched} />
@@ -168,9 +183,15 @@ function Error({ message }) {
 
 // This is the MovieDetails Component and it will be shown when any movie is selected from the MoviesList and we'll render it conditionally within the WatchedList component.
 
-function MoviesDetail({ selectedId }) {
+function MoviesDetail({ selectedId, onCloseMovie }) {
   return (
     <div>
+      <button
+        onClick={onCloseMovie}
+        className="btn-back"
+      >
+        &larr;
+      </button>
       <h2>We'll provide movie details for movie with id: {selectedId}</h2>
     </div>
   );
