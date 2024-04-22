@@ -76,7 +76,11 @@ export default function App() {
       try {
         setIsLoading(true);
         setIsError(""); // It was a worst bug! hehe
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: {
+            Accept: "application/json, text/plain, */*",
+          },
+        });
         console.log(response);
 
         if (response.data.Response !== "False") {
@@ -207,7 +211,12 @@ function MoviesDetail({ selectedId, onCloseMovie }) {
     async function getMovieDetails() {
       try {
         const response = await axios.get(
-          `http://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`
+          `http://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`,
+          {
+            headers: {
+              Accept: "application/json, text/plain, */*",
+            },
+          }
         );
         console.log(response.data); // Log the actual data
         setMovie(response.data); // Set the state with the data
