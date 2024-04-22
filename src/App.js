@@ -65,6 +65,10 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(null);
 
+  // For selected movie
+
+  const [selectedId, setSelectedId] = useState(null);
+
   const url = `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`;
   useEffect(() => {
     const fetchData = async () => {
@@ -118,8 +122,14 @@ export default function App() {
 
         <WatchedList>
           <Box>
-            <WatchedSummary watched={watched} />
-            <WatchList watched={watched}></WatchList>
+            {selectedId ? (
+              <MoviesDetail selectedId={selectedId} />
+            ) : (
+              <>
+                <WatchedSummary watched={watched} />
+                <WatchList watched={watched}></WatchList>
+              </>
+            )}
           </Box>
         </WatchedList>
       </Main>
@@ -153,5 +163,15 @@ function Error({ message }) {
       <span>⛔️</span> {""}
       {message}
     </p>
+  );
+}
+
+// This is the MovieDetails Component and it will be shown when any movie is selected from the MoviesList and we'll render it conditionally within the WatchedList component.
+
+function MoviesDetail({ selectedId }) {
+  return (
+    <div>
+      <h2>We'll provide movie details for movie with id: {selectedId}</h2>
+    </div>
   );
 }
