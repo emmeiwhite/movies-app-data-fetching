@@ -102,7 +102,8 @@ export default function App() {
   }, [query, url]);
 
   function handleSelectMovie(id) {
-    setSelectedId(id);
+    // setSelectedId(id);
+    setSelectedId((currentId) => (id === currentId ? null : id));
   }
 
   function handleCloseMovie() {
@@ -184,6 +185,7 @@ function Error({ message }) {
 // This is the MovieDetails Component and it will be shown when any movie is selected from the MoviesList and we'll render it conditionally within the WatchedList component.
 
 function MoviesDetail({ selectedId, onCloseMovie }) {
+  // Here, we can make the new API call to get all the details and render the details here!!!
   return (
     <div>
       <button
