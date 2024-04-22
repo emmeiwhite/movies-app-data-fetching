@@ -70,6 +70,7 @@ export default function App() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
+        setIsError(""); // It was a worst bug! hehe
         const response = await axios.get(url);
         console.log(response);
 
@@ -87,6 +88,12 @@ export default function App() {
       }
     };
 
+    // Search only when query length is at least 2, do not fetch movies
+    if (query.length < 3) {
+      setMovies([]);
+      setIsError("");
+      return;
+    }
     fetchData();
   }, [query, url]);
 
