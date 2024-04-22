@@ -1,20 +1,24 @@
 .star-ratings-wrapper {
   display: grid;
-  grid-template-columns: minmax(10rem, 15rem) 3rem;
-  gap: 2rem;
+  grid-template-columns: minmax(10rem, 20rem) 3rem;
+  gap: 1rem;
   place-items: center;
+  justify-content: center;
 }
 
 .star-ratings span svg {
-  font-size: 3rem;
+  font-size: 2rem;
   cursor: pointer;
 }
 
 .star-ratings span.filled svg {
-  fill: red;
+  fill: rgb(255, 242, 0);
+  stroke: rgb(255, 242, 0);
+  stroke-width: 1px;
 }
 
-.rating {
-  font-size: 2.5rem;
+.current-rating {
+  font-size: 1.5rem;
   background-color: transparent;
+  font-weight: 300;
 }

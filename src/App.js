@@ -5,6 +5,7 @@ import MoviesList from "./components/MoviesList";
 import WatchedList, { WatchedSummary } from "./components/WatchedList";
 import { MovieList } from "./components/MoviesList";
 import { WatchList } from "./components/WatchedList";
+import StarRating from "./StarRating";
 import axios from "axios";
 
 import { NumResult } from "./components/Navbar";
@@ -99,7 +100,7 @@ export default function App() {
       return;
     }
     fetchData();
-  }, [query, url]);
+  }, [query]);
 
   function handleSelectMovie(id) {
     // setSelectedId(id);
@@ -185,16 +186,87 @@ function Error({ message }) {
 // This is the MovieDetails Component and it will be shown when any movie is selected from the MoviesList and we'll render it conditionally within the WatchedList component.
 
 function MoviesDetail({ selectedId, onCloseMovie }) {
-  // Here, we can make the new API call to get all the details and render the details here!!!
+  console.log(selectedId);
+  const [movie, setMovie] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  const {
+    Title: title,
+    Year: year,
+    Released: released,
+    Runtime: runtime,
+    Genre: genre,
+    Director: director,
+    Actors: actors,
+    Plot: plot,
+    Poster: poster,
+    imdbRating,
+  } = movie;
+
+  useEffect(() => {
+    async function getMovieDetails() {
+      try {
+        const response = await axios.get(
+          `http://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`
+        );
+        console.log(response.data); // Log the actual data
+        setMovie(response.data); // Set the state with the data
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching movie details:", error);
+      }
+    }
+
+    getMovieDetails();
+  }, [selectedId]);
+
   return (
-    <div>
-      <button
-        onClick={onCloseMovie}
-        className="btn-back"
-      >
-        &larr;
-      </button>
-      <h2>We'll provide movie details for movie with id: {selectedId}</h2>
+    <div className="details">
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <header>
+            <button
+              onClick={onCloseMovie}
+              className="btn-back"
+            >
+              &larr;
+            </button>
+
+            <img
+              src={poster}
+              alt={`Poster of ${title} movie`}
+            />
+
+            <div className="details-overview">
+              <h2>{title}</h2>
+              <p>
+                {released} &bull; {runtime}
+              </p>
+              <p>{genre}</p>
+              <p>
+                <span>⭐️</span>
+                {imdbRating} IMDb Rating
+              </p>
+            </div>
+          </header>
+
+          <div className="rating">
+            <StarRating maxRating={10} />
+          </div>
+
+          <section>
+            <p>
+              <em>{plot}</em>
+            </p>
+            <p>Starring {actors}</p>
+            <p>
+              Directed by {director} in the year {year}
+            </p>
+          </section>
+        </>
+      )}
     </div>
   );
 }

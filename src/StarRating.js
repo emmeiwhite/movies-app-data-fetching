@@ -1,7 +1,8 @@
 import { GoStar, GoStarFill } from "react-icons/go";
 import "./StarRating.css";
 import { useState } from "react";
-export default function StarRating() {
+
+export default function StarRating({ maxRating }) {
   const [rating, setRating] = useState(0);
 
   function handleClick(rating) {
@@ -15,7 +16,7 @@ export default function StarRating() {
   return (
     <div className="star-ratings-wrapper">
       <div className="star-ratings">
-        {Array.from({ length: 5 }, (_, i) => (
+        {Array.from({ length: maxRating }, (_, i) => (
           <span
             onClick={() => handleClick(i + 1)}
             onMouseEnter={() => handleMouseEnter(i + 1)}
@@ -27,7 +28,7 @@ export default function StarRating() {
         ))}
       </div>
 
-      <h2 className="rating">{rating || ""}</h2>
+      <h2 className="current-rating">{rating || ""}</h2>
     </div>
   );
 }

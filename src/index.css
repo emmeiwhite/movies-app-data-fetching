@@ -299,7 +299,7 @@ body {
   gap: 0.8rem;
 }
 
-/* .rating {
+.rating {
   background-color: var(--color-background-100);
   border-radius: 0.9rem;
   padding: 2rem 2.4rem;
@@ -308,7 +308,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2.4rem;
-} */
+  margin-top: 2rem;
+}
 
 .btn-add {
   background-color: var(--color-primary);
