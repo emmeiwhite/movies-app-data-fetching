@@ -1,10 +1,13 @@
 import Search from "./Search";
 
-export default function Navbar({ children }) {
+export default function Navbar({ children, query, setQuery }) {
   return (
     <nav className="nav-bar">
       <Logo />
-      <Search />
+      <Search
+        query={query}
+        setQuery={setQuery}
+      />
       {children}
     </nav>
   );

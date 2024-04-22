@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import Main from "./components/Main";
 import MoviesList from "./components/MoviesList";
-import WatchedList from "./components/WatchedList";
+import WatchedList, { WatchedSummary } from "./components/WatchedList";
 import { MovieList } from "./components/MoviesList";
 import { WatchList } from "./components/WatchedList";
 import axios from "axios";
@@ -88,11 +88,14 @@ export default function App() {
     };
 
     fetchData();
-  }, []);
+  }, [query, url]);
 
   return (
     <>
-      <Navbar>
+      <Navbar
+        query={query}
+        setQuery={setQuery}
+      >
         <NumResult movies={movies} />
       </Navbar>
 
@@ -108,6 +111,7 @@ export default function App() {
 
         <WatchedList>
           <Box>
+            <WatchedSummary watched={watched} />
             <WatchList watched={watched}></WatchList>
           </Box>
         </WatchedList>
